@@ -1,0 +1,38 @@
+.is-sidebar-menu {
+    padding: 2.5rem;
+    background: #4a4a4a;
+}
+.is-sidebar-menu li a {
+    color: white;
+}
+
+.columns.is-fullheight {
+  /*
+    min-height: calc(100vh - ( 3.25rem - .75rem ) );
+    max-height: calc(100vh - ( 3.25rem - .75rem ) );
+    height: calc(100vh - ( 3.25rem - .75rem ) );
+  */
+    min-height: 90vh;
+    max-height: 90vh;
+    height: 90vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+}
+.columns.is-fullheight .column {
+    overflow-y: auto;
+}
+
+.is-main-content {
+    background: #dbdbdb;
+}
+
+.CodeMirror, .CodeMirror-scroll {
+    min-height: calc(90vh - 10rem);
+}
+
+input[name="title"] {
+  width: 100%;
+  border-radius; none;
+  font-size: 2rem;
+}

@@ -1,3 +1,45 @@
+<?php
+  require 'ice_mysqli_init.php';
+
+  if ( !isset($_GET['tag_id']) ) {
+    header('Location: http://turkey.slis.tsukuba.ac.jp/~s1711430/');
+    exit();
+  } elseif ( !ctype_digit($_GET['tag_id']) ) {
+    // 数字でなかった場合
+    // 404
+    exit();
+  }
+
+  $mysqli->set_charset("utf8");
+  $sql = "SELECT tag_name ".
+  "FROM ice_tag ".
+  "WHERE tag_id = " . $_GET['tag_id'] . ";";
+  $res = $mysqli->query($sql);
+  
+  if (!$res) {
+    exit();
+  }
+
+  $tag = $res->fetch_assoc();
+
+  $sql = "SELECT post.* ".
+  "FROM ice_post post ".
+  "LEFT JOIN ice_tag_map map on post.post_id = map.post_id ".
+  "LEFT JOIN ice_tag tag on map.tag_id = tag.tag_id ".
+  "WHERE tag.tag_id = " . $_GET['tag_id'] . ";";
+  $res = $mysqli->query($sql);
+
+  if (!$res) {
+    exit();
+  }
+  
+  $posts = $res->fetch_all(MYSQLI_ASSOC);
+  
+  foreach ($posts as &$post) {
+    $post['uri'] = "http://turkey.slis.tsukuba.ac.jp/~s1711430/post.php?post_id=" . $post['post_id'];
+  }
+
+?>
 <!DOCTYPE html>
 <html>
 
@@ -48,30 +90,16 @@
 
     <div class="hero-body">
       <div class="container has-text-centered">
-        <h1 class="title">
-          迫真の氷結晶
+        <h1 class="title" v-init:tag="<?php echo htmlspecialchars(json_encode($tag)); ?>">
+          {{ tag.tag_name }}
         </h1>
-        <h2 class="subtitle">
-          口マンありますねぇ！
-        </h2>
       </div>
     </div>
 
-    <!--
-    <div class="hero-foot">
-      <nav class="tabs">
-        <div class="container">
-          <ul>
-            <li class="is-active"><a>Blog</a></li>
-            <li><a>Portfolio</a></li>
-          </ul>
-        </div>
-      </nav>
-    </div>
-    -->
   </section>
 
-  <section class="section" id="ice_articles">
+  <section class="section" id="ice_articles"
+    v-init:posts="<?php echo htmlspecialchars(json_encode($posts)); ?>" >
     <div class="columns" v-for="post in posts">
       <div class="column content is-three-fifths is-offset-one-fifth">
         <a v-bind:href="post.uri">
@@ -87,26 +115,26 @@
   </section>
 
   <script>
-    var app = new Vue({
+    Vue.directive('init', {
+      bind: function(el, binding, vnode) {
+        vnode.context[binding.arg] = binding.value;
+      }
+    });
+
+    var vm = new Vue({
       el: '#ice_articles',
       data: {
         posts: []
-      },
-      methods: {
-        add: function (post) {
-          this.posts.push(post);
-        }
       }
-    })
+    });
 
-    axios.get('http://turkey.slis.tsukuba.ac.jp/~s1711430/ice_post.php')
-      .then(function (response) {
-        console.log(response);
-        response.data.forEach(app.add);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    new Vue({
+      el: '.hero-body',
+      data: {
+        tag: {}
+      }
+    });
+
   </script>
 </body>
 

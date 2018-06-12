@@ -4,11 +4,13 @@
   $sql = "SELECT * FROM ice_post";
   $res = $mysqli->query($sql);
   
-  print("[");
-  for ( $i = 1;  $row = $res->fetch_array(MYSQL_ASSOC); $i++ ) {
-    print(json_encode($row));
-    if ( $i < $res->num_rows ) print(", ");
+  $posts = $res->fetch_all(MYSQLI_ASSOC);
+  
+  foreach ($posts as &$post) {
+    $post['uri'] = "http://turkey.slis.tsukuba.ac.jp/~s1711430/post.php?post_id=" . $post['post_id'];
   }
-  print("]");
+
+  header('Content-Type: application/json; charset=utf-8');
+  echo json_encode($posts);
 
 ?>
