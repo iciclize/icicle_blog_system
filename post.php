@@ -10,7 +10,6 @@
     exit();
   }
 
-  $mysqli->set_charset('utf8');
   $sql = 'SELECT * FROM ice_post WHERE post_id=' . $_GET['post_id'];
   $res = $mysqli->query($sql);
 

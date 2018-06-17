@@ -10,7 +10,6 @@
     exit();
   }
 
-  $mysqli->set_charset("utf8");
   $sql = "SELECT tag_name ".
   "FROM ice_tag ".
   "WHERE tag_id = " . $_GET['tag_id'] . ";";

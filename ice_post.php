@@ -1,6 +1,5 @@
 <?php
   require 'ice_mysqli_init.php';
-  $mysqli->set_charset("utf8");
   $sql = "SELECT * FROM ice_post";
   $res = $mysqli->query($sql);
   

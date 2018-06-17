@@ -1,3 +1,10 @@
+<?php
+  require 'ice_validate.php';
+  if (!validate()) {
+    header('Location: http://turkey.slis.tsukuba.ac.jp/~s1711430/ice_login.php?redirect_source=edit.php');
+  }
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -69,5 +76,4 @@
     var simplemde = new SimpleMDE();
   </script>
 </body>
-
 </html>
