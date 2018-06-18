@@ -41,16 +41,63 @@
           </aside>
         </div>
 
-        <div class="column">
-          <input name="title" placeholder="Title">
-          <textarea></textarea>
+        <div class="column" id="posts">
+          <div v-if="selected">
+            <input name="title" v-bind:value="edit.title" placeholder="Title">
+            <textarea></textarea>
+          </div>
+          <div v-else>
+            <div class="post content" v-for="post in posts">
+              <a v-on:click="selectPost(post)">
+                <h1>
+                  {{ post.title }}
+                </h1>
+              </a>
+              <p>
+                {{ post.content }}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
   <script>
-    var simplemde = new SimpleMDE();
+    var simplemde;
+
+    var app = new Vue({
+      el: '#posts',
+      data: {
+        selected: false,
+        posts: [],
+        editPostId: null,
+        edit: {}
+      },
+      methods: {
+        add: function(post) {
+          this.posts.push(post);
+        },
+        selectPost: function(post) {
+          this.edit = post;
+          this.selected = true;
+          setTimeout((function(post) {
+            simplemde = new SimpleMDE();
+            simplemde.value(post.content);
+          }).bind(null, post), 200);
+        }
+      }
+    });
+
+    axios.get('http://turkey.slis.tsukuba.ac.jp/~s1711430/ice_post.php')
+      .then(function (response) {
+        console.log(response);
+        response.data.forEach(app.add);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
   </script>
 </body>
 </html>
