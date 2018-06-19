@@ -36,13 +36,35 @@
             </p>
             <ul class="menu-list">
               <li><a href="ice_author_profile.php">プロフィール設定</a></li>
-              <li><a class="is-active">記事の編集</a></li>
+              <li><a href="edit.php">記事の新規作成</a></li>
+              <li><a href="edit.php" class="is-active">記事の編集</a></li>
             </ul>
           </aside>
         </div>
 
         <div class="column" id="posts">
           <div v-if="selected">
+            <div class="level">
+              <div class="level-left">
+              </div>
+              <div class="level-right">
+                <div class="level-item">
+                  <div class="control">
+                    <div class="select">
+                      <select name="status">
+                        <option value="publish">公開</option>
+                        <option value="unpublish">非公開</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="level-item">
+                  <div class="control">
+                    <button v-on:click.prevent="updatePost()" type="submit" class="button is-info">更新</button>
+                  </div>
+                </div>
+              </div>
+            </div>
             <input name="title" v-bind:value="edit.title" placeholder="Title">
             <textarea></textarea>
           </div>
@@ -85,6 +107,12 @@
             simplemde = new SimpleMDE();
             simplemde.value(post.content);
           }).bind(null, post), 200);
+        },
+        updatePost: function() {
+          this.edit.title = document.querySelector('input[name="title"]').value;
+          this.edit.content = simplemde.value();
+          this.edit.status = document.querySelector('select')[document.querySelector('select').selectedIndex].value;
+          console.log(this.edit.title, this.edit.content, this.edit.status);
         }
       }
     });
