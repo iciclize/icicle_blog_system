@@ -36,14 +36,13 @@
             </p>
             <ul class="menu-list">
               <li><a href="ice_author_profile.php">プロフィール設定</a></li>
-              <li><a href="newpost.php">記事の新規作成</a></li>
-              <li><a href="edit.php" class="is-active">記事の編集</a></li>
+              <li><a href="newpost.php" class="is-active">記事の新規作成</a></li>
+              <li><a href="edit.php">記事の編集</a></li>
             </ul>
           </aside>
         </div>
 
         <div class="column" id="posts">
-          <div v-if="selected">
             <div class="level">
               <div class="level-left">
               </div>
@@ -68,63 +67,19 @@
             <input name="title" v-bind:value="edit.title" placeholder="Title">
             <textarea></textarea>
           </div>
-          <div v-else>
-            <div class="post content" v-for="post in posts">
-              <a v-on:click="selectPost(post)">
-                <h1>
-                  {{ post.title }}
-                </h1>
-              </a>
-              <p>
-                {{ post.content }}
-              </p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
   </section>
 
   <script>
-    var simplemde;
+    var simplemde = new SimpleMDE();
 
     var app = new Vue({
-      el: '#posts',
+      el: '#post',
       data: {
-        selected: false,
-        posts: [],
-        editPostId: null,
-        edit: {}
-      },
-      methods: {
-        add: function(post) {
-          this.posts.push(post);
-        },
-        selectPost: function(post) {
-          this.edit = post;
-          this.selected = true;
-          setTimeout((function(post) {
-            simplemde = new SimpleMDE();
-            simplemde.value(post.content);
-          }).bind(null, post), 200);
-        },
-        updatePost: function() {
-          this.edit.title = document.querySelector('input[name="title"]').value;
-          this.edit.content = simplemde.value();
-          this.edit.status = document.querySelector('select')[document.querySelector('select').selectedIndex].value;
-          console.log(this.edit.title, this.edit.content, this.edit.status);
-        }
       }
     });
-
-    axios.get('http://turkey.slis.tsukuba.ac.jp/~s1711430/ice_post.php')
-      .then(function (response) {
-        console.log(response);
-        response.data.forEach(app.add);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
 
   </script>
 </body>

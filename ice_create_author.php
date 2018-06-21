@@ -68,15 +68,13 @@
           </div>
           <div id="navbarMenuHeroA" class="navbar-menu">
             <div class="navbar-end">
-              <a class="navbar-item is-active">Home</a>
-              <a class="navbar-item">Examples</a>
-              <a class="navbar-item">Documentation</a>
+              <a class="navbar-item" href="./ice_create_author.php">新規登録</a>
               <span class="navbar-item">
-                <a class="button is-info is-inverted">
+                <a class="button is-info is-inverted" href="./edit.php">
                   <span class="icon">
-                    <i class="fab fa-github"></i>
+                    <i class="fas fa-edit"></i>
                   </span>
-                  <span>Download</span>
+                  <span>記事を書く</span>
                 </a>
               </span>
             </div>
@@ -88,7 +86,7 @@
     <div class="hero-body">
       <div class="container has-text-centered">
         <h1 class="title">
-          Create new author
+          新規ユーザー登録
         </h1>
       </div>
     </div>
@@ -100,23 +98,23 @@
     <form action="ice_create_author.php" method="POST">
 
       <div class="field">
-        <label class="label">Name</label>
+        <label class="label">名前</label>
         <div class="control">
-          <input class="input" type="text" name="name">
+          <input class="input" required type="text" name="name">
         </div>
       </div>
 
       <div class="field">
         <label class="label">ID</label>
         <div class="control">
-          <input class="input" type="text" name="screen_name">
+          <input class="input" required type="text" name="screen_name">
         </div>
       </div>
 
       <div class="field">
         <label class="label">Password</label>
         <div class="control">
-          <input class="input" type="password" name="password">
+          <input class="input" required type="password" name="password">
         </div>
       </div>
 

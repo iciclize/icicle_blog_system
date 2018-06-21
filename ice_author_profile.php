@@ -29,7 +29,8 @@
               General
             </p>
             <ul class="menu-list">
-              <li><a class="is-active">プロフィール設定</a></li>
+              <li><a href="ice_author_profile.php" class="is-active">プロフィール設定</a></li>
+              <li><a href="newpost.php">記事の新規作成</a></li>
               <li><a href="edit.php">記事の編集</a></li>
             </ul>
           </aside>

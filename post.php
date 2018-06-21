@@ -66,15 +66,12 @@
           </div>
           <div id="navbarMenuHeroA" class="navbar-menu">
             <div class="navbar-end">
-              <a class="navbar-item is-active">Home</a>
-              <a class="navbar-item">Examples</a>
-              <a class="navbar-item">Documentation</a>
               <span class="navbar-item">
                 <a class="button is-info is-inverted">
                   <span class="icon">
-                    <i class="fab fa-github"></i>
+                    <i class="fas fa-edit"></i>
                   </span>
-                  <span>Download</span>
+                  <span>記事を書く</span>
                 </a>
               </span>
             </div>
