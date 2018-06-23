@@ -22,7 +22,6 @@
     if (isset($_FILES['profile_img']['error']) && is_int($_FILES['profile_img']['error'])) {
 
       if ($_FILES['profile_img']['error'] == 0) {
-    
         $filepath = "./images/".$author_id."_profile.".pathinfo($_FILES['profile_img']['name'])['extension'];
 
         $stmt = $mysqli->prepare("UPDATE ice_author SET `image_uri`=? WHERE author_id=?");
@@ -30,7 +29,7 @@
         $stmt->execute();
         $stmt->close();
 
-        move_uploaded_file($_FILES['profile_img']['tmp_name'], $filepath);
+        move_uploaded_file($_FILES['profile_img']['tmp_name'], $filepath) or die("Coudn't copy");
       }
     }
 
@@ -45,24 +44,7 @@
   }
 ?>
 
-<?php
-  function getData($key) {
-    require 'ice_mysqli_init.php';
-    $screen_name = $_COOKIE["screen_name"];
-    $password = $_COOKIE["password"];
-
-    $stmt = $mysqli->prepare("SELECT * FROM ice_author WHERE screen_name=? and password=?");
-    $stmt->bind_param('ss', $screen_name, $password);
-
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if (!$result) return "";
-    $result = $result->fetch_array(MYSQLI_ASSOC)[$key];
-    $stmt->close();
-
-    return htmlspecialchars($result);
-  }
-?> 
+<?php require 'ice_getData.php'; ?>
 
 <!DOCTYPE html>
 <html>
@@ -88,7 +70,7 @@
           <div class="columns">
             <div class="column">
               <figure class="image is-64x64">
-                <img id="icon-preview" alt="icon" src="<?php echo getData('image_uri'); ?>" />
+                <img alt="icon" src="<?php echo getData('image_uri').'?'.time(); ?>" />
               </figure>
               <p>id: <?php echo getData('screen_name'); ?></p>
             </div>
@@ -127,7 +109,7 @@
           <div class="field">
             <label class="label">プロフィール画像</label>
             <figure class="image is-64x64">
-              <img id="icon-preview" alt="icon" src="<?php echo getData('image_uri'); ?>" />
+              <img id="icon-preview" alt="icon" src="<?php echo getData('image_uri').'?'.time(); ?>" />
             </figure>
             <div class="file has-name">
               <label class="file-label">

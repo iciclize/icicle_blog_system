@@ -7,6 +7,36 @@
   }
 ?>
 
+<?php require 'ice_getData.php'; ?>
+
+<?php
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    require 'ice_mysqli_init.php';
+    $author_id = getData('author_id');
+    $title = $_POST['title'];
+    $content = $_POST['content'];
+    $content_text = $_POST['content_text'];
+    $content_html = $_POST['content_html'];
+    $status = $_POST['status'] == 'publish' ? 1 : 0;
+
+    $query = "INSERT INTO ice_post ".
+    ( ($status == 1)
+        ? "(author_id, title, content, content_text, content_html, status, published) ".
+          "VALUES (?, ?, ?, ?, ?, ?, cast( now() as datetime) )"
+        : "(author_id, title, content, content_text, content_html, status) ".
+          "VALUES (?, ?, ?, ?, ?, ?)"
+    );
+
+    var_dump($query);
+
+    $stmt = $mysqli->prepare($query);
+    $stmt->bind_param('ssssii', $author_id, $title, $content, $content_text, $content_html, $status);
+    $stmt->execute();
+    $stmt->close();
+
+  }
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -20,6 +50,7 @@
 
   <link rel="stylesheet" href="simplemde.min.css">
   <script src="simplemde.min.js"></script>
+  <script src="html2plaintext.js"></script>
 
   <link rel="stylesheet" href="inject.css">
 </head>
@@ -30,6 +61,16 @@
     <div class="container">
       <div class="columns is-fullheight">
         <div class="column is-2">
+          <div class="columns">
+
+            <div class="column">
+              <figure class="image is-64x64">
+                <img alt="icon" src="<?php echo getData('image_uri'); ?>" />
+              </figure>
+              <p>id: <?php echo getData('screen_name'); ?></p>
+            </div>
+          </div>
+
           <aside class="menu">
             <p class="menu-label">
               General
@@ -42,7 +83,7 @@
           </aside>
         </div>
 
-        <div class="column" id="posts">
+        <div class="column" id="post">
             <div class="level">
               <div class="level-left">
               </div>
@@ -59,12 +100,13 @@
                 </div>
                 <div class="level-item">
                   <div class="control">
-                    <button v-on:click.prevent="updatePost()" type="submit" class="button is-info">更新</button>
+                    <button v-on:click.prevent="updatePost" type="submit" class="button is-info">記事を投稿する</button>
                   </div>
                 </div>
               </div>
             </div>
-            <input name="title" v-bind:value="edit.title" placeholder="Title">
+
+            <input name="title" v-bind:value="edit.title" placeholder="Title" required>
             <textarea></textarea>
           </div>
         </div>
@@ -73,11 +115,56 @@
   </section>
 
   <script>
-    var simplemde = new SimpleMDE();
+    var simplemde;
+
+    document.addEventListener('DOMContentLoaded', function () {
+      simplemde = new SimpleMDE();
+    });
 
     var app = new Vue({
       el: '#post',
       data: {
+        edit: {
+          title: '',
+          content: '',
+          content_text: '',
+          content_html: '',
+          status: 0
+        }
+      },
+      methods: {
+        updatePost: function() {
+          this.edit.title = document.querySelector('input[name="title"]').value;
+          this.edit.content = simplemde.value();
+          this.edit.content_text = (function() {
+            var e = document.createElement('div');
+            e.innerHTML = SimpleMDE.prototype.markdown(simplemde.value());
+            console.log( html2plaintext(e) );
+            return html2plaintext(e);
+          }());
+          this.edit.content_html = SimpleMDE.prototype.markdown(simplemde.value());
+          this.edit.status = document.querySelector('select')[document.querySelector('select').selectedIndex].value;
+          console.log(this.edit.title, this.edit.content, this.edit.content_text, this.edit.content_html, this.edit.status, this.editPostId);
+
+          if (this.edit.title === "") return false;
+          if (this.edit.content === "") return false;
+
+          var form = new FormData();
+
+          form.append("title", this.edit.title);
+          form.append("content", this.edit.content);
+          form.append("content_text", this.edit.content_text);
+          form.append("content_html", this.edit.content_html);
+          form.append("status", this.edit.status);
+
+          var xhr = new XMLHttpRequest();
+          xhr.onload = function() {
+            console.log(this.responseText);
+            window.location.href = "http://turkey.slis.tsukuba.ac.jp/~s1711430/edit.php";
+          };
+          xhr.open("POST", window.location.href);
+          xhr.send(form);
+        }
       }
     });
 

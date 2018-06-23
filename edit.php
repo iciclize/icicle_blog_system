@@ -7,6 +7,64 @@
   }
 ?>
 
+<?php require 'ice_getData.php'; ?>
+
+<?php
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    require 'ice_mysqli_init.php';
+    $isDelete = isset($_POST['delete']);
+    if ($isDelete) {
+      if (preg_match("/^[0-9]+$/", $_POST['delete'])) {
+        // 削除
+        $stmt = $mysqli->prepare("DELETE FROM ice_post WHERE post_id=?");
+        $stmt->bind_param('i', $_POST['delete']);
+        $stmt->execute();
+        $stmt->close();
+      }
+    } else {
+      // 編集
+      $title = $_POST['title'];
+      $content = $_POST['content'];
+      $content_text = $_POST['content_text'];
+      $content_html = $_POST['content_html'];
+      $status = $_POST['status'] == 'publish' ? 1 : 0;
+      $post_id = $_POST['post_id'];
+
+      $stmt = $mysqli->prepare("SELECT * FROM ice_post WHERE post_id=?");
+      $stmt->bind_param('i', $post_id);
+      $stmt->execute();
+
+      $isPublished = $stmt->get_result()->fetch_array(MYSQLI_ASSOC)['published'] ? true : false;
+      $isFirstPublishing = !$isPublished && $status == 1;
+
+      $stmt->close();
+
+      $query = "UPDATE ice_post SET ".
+      "`title`=?, ".
+      "`content`=?, ".
+      "`content_text`=?, ".
+      "`content_html`=?, ".
+      "`status`=? ".
+      (
+        ($isFirstPublishing)
+          ? ", `published`=cast( now() as datetime) "
+          : ""
+      ).
+      ( 
+        ($isPublished && $status == 1)
+          ? ", `modified`=cast( now() as datetime) "
+          : ""
+      ).
+      "WHERE `post_id`=?";
+
+      $stmt = $mysqli->prepare($query);
+      $stmt->bind_param('ssssii', $title, $content, $content_text, $content_html, $status, $post_id);
+      $stmt->execute();
+      $stmt->close();
+    }
+  }
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -20,6 +78,7 @@
 
   <link rel="stylesheet" href="simplemde.min.css">
   <script src="simplemde.min.js"></script>
+  <script src="html2plaintext.js"></script>
 
   <link rel="stylesheet" href="inject.css">
 </head>
@@ -30,6 +89,16 @@
     <div class="container">
       <div class="columns is-fullheight">
         <div class="column is-2">
+
+          <div class="columns">
+            <div class="column">
+              <figure class="image is-64x64">
+                <img alt="icon" src="<?php echo getData('image_uri'); ?>" />
+              </figure>
+              <p>id: <?php echo getData('screen_name'); ?></p>
+            </div>
+          </div>
+
           <aside class="menu">
             <p class="menu-label">
               General
@@ -46,6 +115,13 @@
           <div v-if="selected">
             <div class="level">
               <div class="level-left">
+
+                <div class="level-item">
+                  <div class="control">
+                    <button v-on:click="deletePost()" type="submit" class="button is-danger">この記事を削除</button>
+                  </div>
+                </div>
+
               </div>
               <div class="level-right">
                 <div class="level-item">
@@ -58,11 +134,13 @@
                     </div>
                   </div>
                 </div>
+
                 <div class="level-item">
                   <div class="control">
-                    <button v-on:click.prevent="updatePost()" type="submit" class="button is-info">更新</button>
+                    <button v-on:click="updatePost()" type="submit" class="button is-info">更新</button>
                   </div>
                 </div>
+
               </div>
             </div>
             <input name="title" v-bind:value="edit.title" placeholder="Title">
@@ -76,7 +154,7 @@
                 </h1>
               </a>
               <p>
-                {{ post.content }}
+                {{ post.content_text }}
               </p>
             </div>
           </div>
@@ -102,6 +180,7 @@
         },
         selectPost: function(post) {
           this.edit = post;
+          this.editPostId = post.post_id;
           this.selected = true;
           setTimeout((function(post) {
             simplemde = new SimpleMDE();
@@ -111,8 +190,44 @@
         updatePost: function() {
           this.edit.title = document.querySelector('input[name="title"]').value;
           this.edit.content = simplemde.value();
+          this.edit.content_text = (function() {
+            var e = document.createElement('div');
+            e.innerHTML = SimpleMDE.prototype.markdown(simplemde.value() );
+            console.log( html2plaintext(e) );
+            return html2plaintext(e);
+          }());
+          this.edit.content_html = SimpleMDE.prototype.markdown(simplemde.value());
           this.edit.status = document.querySelector('select')[document.querySelector('select').selectedIndex].value;
-          console.log(this.edit.title, this.edit.content, this.edit.status);
+          if (this.edit.title === "") return false;
+          if (this.edit.content === "") return false;
+
+          var form = new FormData();
+
+          form.append("post_id", this.editPostId);
+          form.append("title", this.edit.title);
+          form.append("content", this.edit.content);
+          form.append("content_text", this.edit.content_text);
+          form.append("content_html", this.edit.content_html);
+          form.append("status", this.edit.status);
+
+          var xhr = new XMLHttpRequest();
+          xhr.onload = function() {
+            console.log(this.responseText);
+            // location.reload();
+          };
+          xhr.open("POST", window.location.href);
+          xhr.send(form);
+        },
+        deletePost: function() {
+          var form = new FormData();
+          form.append("delete", this.editPostId);
+          var xhr = new XMLHttpRequest();
+          xhr.onload = function() {
+            console.log(this.responseText);
+            location.reload();
+          };
+          xhr.open("POST", window.location.href);
+          xhr.send(form);
         }
       }
     });
