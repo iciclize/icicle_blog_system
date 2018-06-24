@@ -18,7 +18,7 @@
     $stmt->store_result();
     $num_rows = $stmt->num_rows;
     $stmt->close();
-    return ($num_rows == 0);
+    return ($num_rows > 0);
   }
 
   if (isset($_POST['name'])
@@ -31,7 +31,9 @@
 
     if ( !isScreenNameOverlapped($screen_name) ) {
       if ( insert($name, $screen_name, $password) ) {
-        header("Location: http://turkey.slis.tsukuba.ac.jp/~s1711430/ice_profile_settings.php");
+       setcookie('screen_name', $screen_name, 0, "/~s1711430/");
+       setcookie('password', $password, 0, "/~s1711430/");
+       header("Location: http://turkey.slis.tsukuba.ac.jp/~s1711430/ice_author_profile.php");
       }
     }
   }
@@ -43,7 +45,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>New Author</title>
+  <title>New Author - Icicle Blog System</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
   <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -57,8 +59,8 @@
       <nav class="navbar">
         <div class="container">
           <div class="navbar-brand">
-            <a class="navbar-item">
-              <img src="https://bulma.io/images/bulma-type-white.png" alt="Logo" />
+            <a class="navbar-item" href="./">
+              <img src="./yjsnpi.png" alt="Logo" />
             </a>
             <span class="navbar-burger burger" data-target="navbarMenuHeroA">
               <span></span>

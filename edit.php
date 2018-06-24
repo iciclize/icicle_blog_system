@@ -71,7 +71,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Hello Bulma!</title>
+  <title>記事の編集 - Icicle Blog System</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -83,35 +83,19 @@
   <link rel="stylesheet" href="inject.css">
 </head>
 
-<body>
+<body data-author_id="<?php echo htmlspecialchars(getData('author_id')) ?>">
 
   <section class="section">
     <div class="container">
       <div class="columns is-fullheight">
         <div class="column is-2">
 
-          <div class="columns">
-            <div class="column">
-              <figure class="image is-64x64">
-                <img alt="icon" src="<?php echo getData('image_uri'); ?>" />
-              </figure>
-              <p>id: <?php echo getData('screen_name'); ?></p>
-            </div>
-          </div>
-
-          <aside class="menu">
-            <p class="menu-label">
-              General
-            </p>
-            <ul class="menu-list">
-              <li><a href="ice_author_profile.php">プロフィール設定</a></li>
-              <li><a href="newpost.php">記事の新規作成</a></li>
-              <li><a href="edit.php" class="is-active">記事の編集</a></li>
-            </ul>
-          </aside>
-        </div>
-
+        <?php require 'ice_author_menu.php' ?>
+          
         <div class="column" id="posts">
+
+          <h1 class="title author_title">記事の編集</h1>
+
           <div v-if="selected">
             <div class="level">
               <div class="level-left">
@@ -149,12 +133,12 @@
           <div v-else>
             <div class="post content" v-for="post in posts">
               <a v-on:click="selectPost(post)">
-                <h1>
+                <h1 class="title is-2">
                   {{ post.title }}
                 </h1>
               </a>
-              <p>
-                {{ post.content_text }}
+              <p class="content-text">
+                {{ post.content_text | letter400 }}
               </p>
             </div>
           </div>
@@ -166,9 +150,16 @@
   <script>
     var simplemde;
 
+    Vue.filter('letter400', function (value) {
+        if (!value) return ''
+        value = value.toString();
+        return value.slice(0, 400);
+    });
+
     var app = new Vue({
       el: '#posts',
       data: {
+        author_id: null,
         selected: false,
         posts: [],
         editPostId: null,
@@ -183,9 +174,10 @@
           this.editPostId = post.post_id;
           this.selected = true;
           setTimeout((function(post) {
+            document.querySelector('select[name="status"]').selectedIndex = (post.status == 0) ? 1 : 0;
             simplemde = new SimpleMDE();
             simplemde.value(post.content);
-          }).bind(null, post), 200);
+          }).bind(null, post), 145);
         },
         updatePost: function() {
           this.edit.title = document.querySelector('input[name="title"]').value;
@@ -213,7 +205,7 @@
           var xhr = new XMLHttpRequest();
           xhr.onload = function() {
             console.log(this.responseText);
-            // location.reload();
+            location.reload();
           };
           xhr.open("POST", window.location.href);
           xhr.send(form);
@@ -232,7 +224,9 @@
       }
     });
 
-    axios.get('http://turkey.slis.tsukuba.ac.jp/~s1711430/ice_post.php')
+    var author_id = document.body.dataset.author_id;
+
+    axios.get('http://turkey.slis.tsukuba.ac.jp/~s1711430/ice_post.php?author_id=' + author_id)
       .then(function (response) {
         console.log(response);
         response.data.forEach(app.add);

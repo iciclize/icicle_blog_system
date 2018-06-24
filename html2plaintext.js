@@ -27,7 +27,7 @@ function html2plaintext(node) {
       }
 
       if (node.tagName === 'BR') {
-        text += '\n';
+        text += ' '; //'\n';
         isStartOfLine = true;
         continue;
       }
@@ -38,14 +38,14 @@ function html2plaintext(node) {
       }
 
       if (!isStartOfLine) {
-        text += '\n';
+        text += ' '; //'\n';
         isStartOfLine = true;
       }
 
       appendText(node.childNodes);
 
       if (!isStartOfLine) {
-        text += '\n';
+        text += ' '; //'\n';
         isStartOfLine = true;
       }
     }

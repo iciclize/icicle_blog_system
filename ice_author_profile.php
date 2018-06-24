@@ -52,8 +52,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Hello Bulma!</title>
+  <title>プロフィール設定 - Icicle Blog System</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
+  <link rel="stylesheet" href="inject.css" >
   <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -67,30 +68,13 @@
       <div class="columns is-fullheight">
         <div class="column is-2">
 
-          <div class="columns">
-            <div class="column">
-              <figure class="image is-64x64">
-                <img alt="icon" src="<?php echo getData('image_uri').'?'.time(); ?>" />
-              </figure>
-              <p>id: <?php echo getData('screen_name'); ?></p>
-            </div>
-          </div>
-
-          <aside class="menu">
-            <p class="menu-label">
-              General
-            </p>
-            <ul class="menu-list">
-              <li><a href="ice_author_profile.php" class="is-active">プロフィール設定</a></li>
-              <li><a href="newpost.php">記事の新規作成</a></li>
-              <li><a href="edit.php">記事の編集</a></li>
-            </ul>
-          </aside>
-        </div>
-
+        <?php require 'ice_author_menu.php' ?>
+          
         <div class="column">
 
         <form action="ice_author_profile.php" method="POST" enctype="multipart/form-data">
+
+          <h1 class="title author_title">プロフィール設定</h1>
 
           <div class="field">
             <label class="label">Name</label>

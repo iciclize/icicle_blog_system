@@ -20,7 +20,6 @@
     justify-content: stretch;
 }
 .columns.is-fullheight .column {
-    overflow-y: auto;
 }
 
 .is-main-content {
@@ -28,11 +27,19 @@
 }
 
 .CodeMirror, .CodeMirror-scroll {
-    min-height: calc(90vh - 10rem);
+    height: calc(80vh - 10rem);
 }
 
 input[name="title"] {
   width: 100%;
   border-radius; none;
   font-size: 2rem;
+}
+
+.author_title {
+  padding-bottom: .4em;
+  border-bottom: 1px solid gray;
+}
+
+.content-text {
 }

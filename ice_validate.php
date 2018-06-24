@@ -16,9 +16,7 @@
     $num_rows = $stmt->num_rows;
     $stmt->close();
 
-    if ($num_rows > 0) return true;
-
-    return false;
+    return ($num_rows > 0);
   }
 ?>
 
