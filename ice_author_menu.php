@@ -15,6 +15,8 @@
               <li><a href="ice_author_profile.php">プロフィール設定</a></li>
               <li><a href="ice_newpost.php">記事の新規作成</a></li>
               <li><a href="edit.php">記事の編集</a></li>
+              <li><a href="ice_manage_comment.php">コメントの管理</a></li>
+              <li><a href="ice_manage_tag.php">タグの管理</a></li>
             </ul>
             <p class="menu-label">CONTROL</p>
             <a href="ice_setcookie.php" class="button is-danger">ログアウト</a>

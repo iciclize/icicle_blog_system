@@ -30,8 +30,6 @@
       $status = $_POST['status'] == 'publish' ? 1 : 0;
       $post_id = $_POST['post_id'];
 
-      if ($title == "") $title = "No Title";
-
       $stmt = $mysqli->prepare("SELECT * FROM ice_post WHERE post_id=?");
       $stmt->bind_param('i', $post_id);
       $stmt->execute();
@@ -73,7 +71,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>記事の編集 - Icicle Blog System</title>
+  <title>コメントの管理- Icicle Blog System</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -96,7 +94,7 @@
           
         <div class="column" id="posts">
 
-          <h1 class="title author_title">記事の編集</h1>
+          <h1 class="title author_title">コメントの管理</h1>
 
           <div v-if="selected">
             <div class="level">

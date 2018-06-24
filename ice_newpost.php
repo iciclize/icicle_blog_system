@@ -19,6 +19,8 @@
     $content_html = $_POST['content_html'];
     $status = $_POST['status'] == 'publish' ? 1 : 0;
 
+    if ($title == "") $title = "No Title";
+
     $query = "INSERT INTO ice_post ".
     ( ($status == 1)
         ? "(author_id, title, content, content_text, content_html, status, published) ".
