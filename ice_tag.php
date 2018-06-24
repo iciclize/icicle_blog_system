@@ -1,110 +1,67 @@
 <?php
-  require 'ice_mysqli_init.php';
+  function createNewTag($tagName) {
+    require 'ice_mysqli_init.php';
 
-  if ( !isset($_GET['tag_id']) ) {
-    header('Location: http://turkey.slis.tsukuba.ac.jp/~s1711430/');
-    exit();
-  } elseif ( !ctype_digit($_GET['tag_id']) ) {
-    // 数字でなかった場合
-    // 404
-    exit();
+    if ($tagName == "") return;
+
+    $sql = "INSERT INTO ice_tag (tag_name) VALUES ('".$tagName."');";
+    $res = $mysqli->query($sql);
+    $mysqli->close();
+
+    return ($res);
   }
 
-  $sql = "SELECT tag_name ".
-  "FROM ice_tag ".
-  "WHERE tag_id = " . $_GET['tag_id'] . ";";
-  $res = $mysqli->query($sql);
-  
-  if (!$res) {
-    exit();
+  function editTagName($tagId, $tagName) {
+    require 'ice_mysqli_init.php';
+    
+    if ($tagName == "") return;
+
+    $sql = "UPDATE ice_tag SET `tag_name`='".$tagName."' WHERE `tag_id`=".$tagId.";";
+    $res = $mysqli->query($sql);
+    $mysqli->close();
+
+    return ($res);
   }
 
-  $tag = $res->fetch_assoc();
+  function deleteTag($tagId) {
+    require 'ice_mysqli_init.php';
+    $sql = "DELETE FROM ice_tag_map WHERE tag_id=".$tagId.";";
+    $res = $mysqli->query($sql);
 
-  $sql = "SELECT post.* ".
-  "FROM ice_post post ".
-  "LEFT JOIN ice_tag_map map on post.post_id = map.post_id ".
-  "LEFT JOIN ice_tag tag on map.tag_id = tag.tag_id ".
-  "WHERE tag.tag_id = " . $_GET['tag_id'] . ";";
-  $res = $mysqli->query($sql);
+    $sql = "DELETE FROM ice_tag WHERE tag_id=".$tagId.";";
+    $res = $mysqli->query($sql);
+    $mysqli->close();
 
-  if (!$res) {
-    exit();
+    return ($res);
   }
-  
-  $posts = $res->fetch_all(MYSQLI_ASSOC);
-  
-  foreach ($posts as &$post) {
-    $post['uri'] = "http://turkey.slis.tsukuba.ac.jp/~s1711430/post.php?post_id=" . $post['post_id'];
+?>
+
+<?php
+
+  if (isset($_GET['create_tag'])) {
+    createNewTag($_GET['create_tag']);
+    echo http_response_code( 200 );
+  } else if (isset($_GET['edit_tag']) && isset($_GET['tag_id'])) {
+    echo editTagName($_GET['tag_id'], $_GET['edit_tag']);
+    // echo http_response_code( 200 );
+  } else if (isset($_GET['delete_tag'])) {
+    deleteTag($_GET['delete_tag']);
+    echo http_response_code( 200 );
+  } else {
+
+  // tags array
+    require 'ice_mysqli_init.php';
+
+    $sql = "SELECT * FROM ice_tag WHERE 1;";
+    $res = $mysqli->query($sql);
+
+    $tags = $res->fetch_all(MYSQLI_ASSOC);
+
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($tags);
+
+    $mysqli->close();
+
   }
 
 ?>
-<!DOCTYPE html>
-<html>
-
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Hello Bulma!</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
-  <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-</head>
-
-<body>
-
-  <section class="hero is-info is-medium">
-    <?php require 'hero_head.php'; ?>
-    
-    <div class="hero-body">
-      <div class="container has-text-centered">
-        <h1 class="title" v-init:tag="<?php echo htmlspecialchars(json_encode($tag)); ?>">
-          {{ tag.tag_name }}
-        </h1>
-      </div>
-    </div>
-
-  </section>
-
-  <section class="section" id="ice_articles"
-    v-init:posts="<?php echo htmlspecialchars(json_encode($posts)); ?>" >
-    <div class="columns" v-for="post in posts">
-      <div class="column content is-three-fifths is-offset-one-fifth">
-        <a v-bind:href="post.uri">
-          <h1>
-            {{ post.title }}
-          </h1>
-        </a>
-        <p>
-          {{ post.content_text }}
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <script>
-    Vue.directive('init', {
-      bind: function(el, binding, vnode) {
-        vnode.context[binding.arg] = binding.value;
-      }
-    });
-
-    var vm = new Vue({
-      el: '#ice_articles',
-      data: {
-        posts: []
-      }
-    });
-
-    new Vue({
-      el: '.hero-body',
-      data: {
-        tag: {}
-      }
-    });
-
-  </script>
-</body>
-
-</html>

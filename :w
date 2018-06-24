@@ -79,61 +79,49 @@
       <div class="columns">
         <div class="column is-7 is-offset-1">
 
-          <section class="section">
+          <section class="container">
+          <h2 class="title is-4">コメント</h2>
 
-            <h2 class="title is-4">コメント</h2>
-            <div v-for="comment in comments" class="content">
-              <p class="title is-5">
-                {{ comment.title }}
-                <span class="subtitle is-6"> by {{ comment.name }}</span>
-              </p>
-              <div>
-                {{ comment.comment_text }}
+          <div v-for="comment in comments">
+            <p class="title is-5">{{ comment.name }}</p>
+            <div>
+              {{ comment.comment_text }}
+            </div>
+          </div>
+          </section>
+
+          <h2 class="title is-4">コメントを残す</h2>
+
+          <form action="ice_comment.php" method="POST">
+            <div class="columns">
+
+              <div class="column is-three-fifths">
+                <div class="field">
+                  <label class="label">タイトル</label>
+                  <div class="control">
+                    <input class="input" type="text" name="title">
+                  </div>
+                </div>
               </div>
+
+              <div class="column is-two-fifths">
+                <div class="field">
+                  <label class="label">氏名</label>
+                  <div class="control">
+                    <input class="input" type="text" name="name">
+                  </div>
+                </div>
+              </div>
+
             </div>
 
-          </section>
-
-          <section class="section">
-
-            <h2 class="title is-4">コメントを残す</h2>
-
-            <form action="ice_comment.php" method="POST">
-              <input type="hidden" name="post_id" value="<?php echo htmlspecialchars($_GET['post_id']); ?>" />
-              <div class="columns">
-
-                <div class="column is-three-fifths">
-                  <div class="field">
-                    <label class="label">タイトル</label>
-                    <div class="control">
-                      <input required class="input" type="text" name="title">
-                    </div>
-                  </div>
-                </div>
-
-                <div class="column is-two-fifths">
-                  <div class="field">
-                    <label class="label">お名前</label>
-                    <div class="control">
-                      <input required class="input" type="text" name="name">
-                    </div>
-                  </div>
-                </div>
-
+            <div class="field">
+              <label class="label">コメント</label>
+              <div class="control">
+                <textarea class="input" name="comment_text"></textarea>
               </div>
-
-              <div class="field">
-                <label class="label">コメント</label>
-                <div class="control">
-                  <textarea required class="textarea" name="comment_text"></textarea>
-                </div>
-              </div>
-              
-              <button type="submit" class="button is-info">コメントを投稿する</button>
-
-            </form>
-
-          </section>
+            </div>
+          </form>
 
         </div>
       </div>

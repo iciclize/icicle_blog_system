@@ -78,7 +78,7 @@
         deleteTag: function(tag) {
           var xhr = new XMLHttpRequest();
           xhr.onload = updateTagList;
-          xhr.open('GET', 'http://turkey.slis.tsukuba.ac.jp/~s1711430/ice_tag_list.php?delete_tag={{X}}'
+          xhr.open('GET', 'http://turkey.slis.tsukuba.ac.jp/~s1711430/ice_tag.php?delete_tag={{X}}'
             .replace("{{X}}", tag.tag_id) );
           xhr.send();
         },
@@ -88,7 +88,7 @@
 
           var xhr = new XMLHttpRequest();
           xhr.onload = updateTagList;
-          xhr.open('GET', 'http://turkey.slis.tsukuba.ac.jp/~s1711430/ice_tag_list.php?create_tag={{X}}'
+          xhr.open('GET', 'http://turkey.slis.tsukuba.ac.jp/~s1711430/ice_tag.php?create_tag={{X}}'
             .replace("{{X}}", tag.value) );
           tag.value = '';
           xhr.send();
@@ -102,7 +102,7 @@
           var xhr = new XMLHttpRequest();
           xhr.onload = updateTagList;
 
-          xhr.open('GET', 'http://turkey.slis.tsukuba.ac.jp/~s1711430/ice_tag_list.php?edit_tag={{X}}&tag_id={{Y}}'
+          xhr.open('GET', 'http://turkey.slis.tsukuba.ac.jp/~s1711430/ice_tag.php?edit_tag={{X}}&tag_id={{Y}}'
             .replace("{{X}}", e.tag_name).replace("{{Y}}", e.tag_id) );
           xhr.send();
         }
@@ -112,7 +112,7 @@
     function updateTagList() {
       while (app.tags.length > 0) app.tags.pop();
 
-      axios.get('http://turkey.slis.tsukuba.ac.jp/~s1711430/ice_tag_list.php')
+      axios.get('http://turkey.slis.tsukuba.ac.jp/~s1711430/ice_tag.php')
         .then(function (response) {
           console.log(response);
           response.data.forEach(app.add);

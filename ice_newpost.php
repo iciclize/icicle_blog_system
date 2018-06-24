@@ -18,6 +18,7 @@
     $content_text = $_POST['content_text'];
     $content_html = $_POST['content_html'];
     $status = $_POST['status'] == 'publish' ? 1 : 0;
+    $tag_list = split(",", $_POST['tag_list']);
 
     if ($title == "") $title = "No Title";
 
@@ -29,11 +30,19 @@
           "VALUES (?, ?, ?, ?, ?, ?)"
     );
 
-    var_dump($query);
-
     $stmt = $mysqli->prepare($query);
     $stmt->bind_param('ssssii', $author_id, $title, $content, $content_text, $content_html, $status);
     $stmt->execute();
+
+    $post_id = $stmt->insert_id;
+    
+    $query = "INSERT INTO ice_tag_map (post_id, tag_id) VALUES (?, ?)";
+    $stmt = $mysqli->prepare($query);
+    foreach($tag_list as $tag_id) {
+      $stmt->bind_param('ii', $post_id, $tag_id);
+      $stmt->execute();
+    }
+
     $stmt->close();
 
   }
@@ -53,6 +62,8 @@
   <link rel="stylesheet" href="simplemde.min.css">
   <script src="simplemde.min.js"></script>
   <script src="html2plaintext.js"></script>
+  <script src="https://unpkg.com/vue@latest"></script>
+  <script src="https://unpkg.com/vue-select@latest"></script>
 
   <link rel="stylesheet" href="inject.css">
 </head>
@@ -93,6 +104,7 @@
             </div>
 
             <input name="title" v-bind:value="edit.title" placeholder="Title" required>
+            <v-select multiple v-model="selected" :options="tags"></v-select>
             <textarea></textarea>
           </div>
         </div>
@@ -102,6 +114,7 @@
 
   <script>
     var simplemde;
+    Vue.component('v-select', VueSelect.VueSelect);
 
     document.addEventListener('DOMContentLoaded', function () {
       simplemde = new SimpleMDE();
@@ -116,9 +129,17 @@
           content_text: '',
           content_html: '',
           status: 0
-        }
+        },
+        tags: [],
+        selected: []
       },
       methods: {
+        setTag: function(tags) {
+          tags.forEach(function(e, i, arr) {
+            arr[i].label = e.tag_name;
+          });
+          this.tags = tags;
+        },
         updatePost: function() {
           this.edit.title = document.querySelector('input[name="title"]').value;
           this.edit.content = simplemde.value();
@@ -142,6 +163,10 @@
           form.append("content_text", this.edit.content_text);
           form.append("content_html", this.edit.content_html);
           form.append("status", this.edit.status);
+          form.append("tag_list", this.selected.map(function(tag) {
+            return tag.tag_id;
+          }).join(',') );
+
 
           var xhr = new XMLHttpRequest();
           xhr.onload = function() {
@@ -153,6 +178,16 @@
         }
       }
     });
+
+    axios.get('http://turkey.slis.tsukuba.ac.jp/~s1711430/ice_tag.php')
+      .then(function (response) {
+        console.log(response);
+        app.setTag(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
 
   </script>
 </body>

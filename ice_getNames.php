@@ -23,4 +23,9 @@
     return $mysqli->query($sql)->fetch_array(MYSQLI_ASSOC)['biography'];
   }
 
+  function getPostTitle($post_id) {
+    require 'ice_mysqli_init.php';
+    $sql = "SELECT title  FROM ice_post WHERE post_id=".$post_id.";" ;
+    return $mysqli->query($sql)->fetch_array(MYSQLI_ASSOC)['title'];
+  }
 ?>
