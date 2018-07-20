@@ -15,30 +15,37 @@
 </head>
 
 <body>
-  <div class="section container">
-    <h1 class="title">ログイン</h1>
-    <form action="ice_setcookie.php" method="GET">
-      <input type="hidden" name="redirect_source" value="<?php echo $_GET['redirect_source'] ?>">
-      <div class="field">
-        <label class="label">ID</label>
-        <div class="control">
-          <input class="input" type="text" name="screen_name">
+  <div class="section">
+    <div class="container">
+      <h1 class="title">ログイン</h1>
+      <form action="ice_setcookie.php" method="GET">
+        <input type="hidden" name="redirect_source" value="<?php echo $_GET['redirect_source'] ?>">
+        <div class="field">
+          <label class="label">ID</label>
+          <div class="control">
+            <input class="input" type="text" name="screen_name">
+          </div>
         </div>
-      </div>
 
-      <div class="field">
-        <label class="label">Password</label>
-        <div class="control">
-          <input class="input" type="password" name="password">
+        <div class="field">
+          <label class="label">Password</label>
+          <div class="control">
+            <input class="input" type="password" name="password">
+          </div>
         </div>
-      </div>
 
-      <div class="field">
-        <div class="control">
-          <input class="button is-primary" type="submit">
+        <div class="field">
+          <div class="control">
+            <input class="button is-primary" type="submit">
+          </div>
         </div>
-      </div>
-    </form>
+      </form>
+
+      <p><a href="./ice_create_author.php">新規ユーザー登録</a></p>
+
+    </div>
+
+
   </div>
 </body>
 

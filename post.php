@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?php echo htmlspecialchars(getPostTitle($_GET['post_id'])); ?> - Icicle Blog System</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
+  <link rel="stylesheet" href="inject.css">
   <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -23,30 +24,23 @@
 
     <section class="section container">
       <div class="columns">
-        <div class="column content is-7 is-offset-1">
+        <div class="column is-7 is-offset-1">
 
-          <article>
             <h1 class="title entry-title">
               {{ post.title }}
             </h1>
-            <div class="level">
-              <div class="level-left">
-                <div class="tags">
-                  <a v-for="tag in post.tags" class="tag is-info" v-bind:href="tag.uri">
-                    {{ tag.tag_name }}
-                  </a>
-                </div>
-              </div>
-              <div class="level-right">
-                <div>
-                  <span>公開: {{ post.published }}</span><br>
-                  <span v-if="post.modified">最終更新: {{ post.modified }}</span>
-                </div>
-              </div>
+            <div class="tags">
+              <a v-for="tag in post.tags" class="tag is-info" v-bind:href="tag.uri">
+                {{ tag.tag_name }}
+              </a>
             </div>
-            <div v-html="post.content_html" />
+            <h2 class="subtitle is-6">
+              <span>公開: {{ post.published }}</span><br>
+              <span v-if="post.modified">最終更新: {{ post.modified }}</span>
+            </h2>
+            <div class="content" v-html="post.content_html" />
           </div>
-        </article>
+
       </div>
 
       <div class="column is-3">
@@ -66,7 +60,7 @@
                     {{ post.author_name }}
                   </a>
                 </p>
-                <p class="subtitle is-6">{{ post.author_biography }}</p>
+                <p class="subtitle is-6 content-text">{{ post.author_biography }}</p>
               </div>
             </div>
           </div>
@@ -87,14 +81,12 @@
                 {{ comment.title }}
                 <span class="subtitle is-6"> by {{ comment.name }}</span>
               </p>
-              <div>
-                {{ comment.comment_text }}
-              </div>
+              <div class="comment">{{ comment.comment_text }}</div>
             </div>
 
           </section>
 
-          <section class="section">
+          <section class="section card">
 
             <h2 class="title is-4">コメントを残す</h2>
 

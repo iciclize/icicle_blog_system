@@ -40,6 +40,7 @@
       $status = $_POST['status'] == 'publish' ? 1 : 0;
       $post_id = $_POST['post_id'];
       $tag_list = split(",", $_POST['tag_list']);
+        if ($_POST['tag_list'] == "") $tag_list = array();
 
       if ($title == "") $title = "No Title";
 
@@ -153,7 +154,7 @@
 
               </div>
             </div>
-            <input name="title" v-bind:value="edit.title" placeholder="Title">
+            <input name="title" placeholder="Title" class="yjsnpi">
             <v-select multiple v-model="selected" :options="tags"></v-select>
             <textarea></textarea>
           </div>
@@ -164,9 +165,7 @@
                   {{ post.title }}
                 </h1>
               </a>
-              <p class="content-text">
-                {{ post.content_text | letter400 }}
-              </p>
+              <p class="content-text">{{ post.content_text | letter400 }}</p>
             </div>
           </div>
         </div>
@@ -229,6 +228,7 @@
 
           setTimeout((function(post) {
             document.querySelector('select[name="status"]').selectedIndex = (post.status == 0) ? 1 : 0;
+            document.querySelector('input[name="title"]').value = post.title;
             simplemde = new SimpleMDE();
             simplemde.value(post.content);
           }).bind(null, post), 145);

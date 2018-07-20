@@ -65,7 +65,7 @@
 
   <section class="section">
     <div class="container">
-      <div class="columns is-fullheight">
+      <div class="columns">
         <div class="column is-2">
 
         <?php require 'ice_author_menu.php' ?>
@@ -112,13 +112,13 @@
             </div>
             <script>
               document.addEventListener('DOMContentLoaded', function(e) {
-                document.querySelector('.file-input').addEventListener('change', function() {
+                document.querySelector('.file-input').addEventListener('change', function(c) {
                   var reader = new FileReader();
                   reader.addEventListener('load', function() {
                     document.querySelector('#icon-preview').src = reader.result;
                   });
-                  reader.readAsDataURL(e.target.activeElement.files[0]);
-                  document.querySelector('.file-name').innerText = e.target.activeElement.files[0].name;
+                  reader.readAsDataURL(c.target.files[0]);
+                  document.querySelector('.file-name').innerText = c.target.files[0].name;
                 });
               });
             </script>

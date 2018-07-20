@@ -52,7 +52,7 @@
   // tags array
     require 'ice_mysqli_init.php';
 
-    $sql = "SELECT * FROM ice_tag WHERE 1;";
+    $sql = "SELECT * FROM ice_tag WHERE 1 ORDER BY tag_id DESC;";
     $res = $mysqli->query($sql);
 
     $tags = $res->fetch_all(MYSQLI_ASSOC);

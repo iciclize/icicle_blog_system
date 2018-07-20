@@ -19,7 +19,14 @@
               <li><a href="ice_manage_tag.php">タグの管理</a></li>
             </ul>
             <p class="menu-label">CONTROL</p>
-            <a href="ice_setcookie.php" class="button is-danger">ログアウト</a>
+            <ul class="menu-list">
+              <li><a href="./">トップページへ</a></li>
+              <li><a href="ice_setcookie.php"><button class="button is-info">ログアウト</button></a></li>
+            </ul>
+            <p class="menu-label">押し間違えないで</p>
+            <ul class="menu-list">
+              <li><a href="ice_delete_author.php"><button class="button is-danger">アカウントを削除</button></a></li>
+            </ul>
           </aside>
         </div>
 

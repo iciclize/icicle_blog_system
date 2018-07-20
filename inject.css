@@ -30,7 +30,7 @@
     height: calc(80vh - 10rem);
 }
 
-input[name="title"] {
+input[name="title"].yjsnpi {
   width: 100%;
   border-radius; none;
   font-size: 2rem;
@@ -42,4 +42,9 @@ input[name="title"] {
 }
 
 .content-text {
+  white-space: pre-line;
+}
+
+.comment {
+  white-space: pre-line;
 }

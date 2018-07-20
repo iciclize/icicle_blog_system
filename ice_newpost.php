@@ -19,6 +19,7 @@
     $content_html = $_POST['content_html'];
     $status = $_POST['status'] == 'publish' ? 1 : 0;
     $tag_list = split(",", $_POST['tag_list']);
+    if ($_POST['tag_list'] == "") $tag_list = array();
 
     if ($title == "") $title = "No Title";
 
@@ -31,7 +32,7 @@
     );
 
     $stmt = $mysqli->prepare($query);
-    $stmt->bind_param('ssssii', $author_id, $title, $content, $content_text, $content_html, $status);
+    $stmt->bind_param('sssssi', $author_id, $title, $content, $content_text, $content_html, $status);
     $stmt->execute();
 
     $post_id = $stmt->insert_id;
@@ -72,7 +73,7 @@
 
   <section class="section">
     <div class="container">
-      <div class="columns is-fullheight">
+      <div class="columns">
         <div class="column is-2">
 
         <?php require 'ice_author_menu.php' ?>
@@ -97,13 +98,13 @@
                 </div>
                 <div class="level-item">
                   <div class="control">
-                    <button v-on:click.prevent="updatePost" type="submit" class="button is-info">記事を投稿する</button>
+                    <button v-on:click="updatePost" class="button is-info">記事を投稿する</button>
                   </div>
                 </div>
               </div>
             </div>
 
-            <input name="title" v-bind:value="edit.title" placeholder="Title" required>
+            <input name="title" placeholder="Title" required class="yjsnpi">
             <v-select multiple v-model="selected" :options="tags"></v-select>
             <textarea></textarea>
           </div>

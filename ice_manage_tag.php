@@ -26,7 +26,7 @@
 
   <section class="section">
     <div class="container">
-      <div class="columns is-fullheight">
+      <div class="columns">
         <div class="column is-2">
 
         <?php require 'ice_author_menu.php' ?>
@@ -39,7 +39,7 @@
             <tbody>
               <tr v-for="tag in tags">
                 <td>
-                  <p v-on:click="modifyTagName(tag, true)" v-if="!tag.isModifying">{{ tag.tag_name }}</p>
+                  <p v-on:click="modifyTagName(tag, true)" v-if="!tag.isModifying" style="cursor: pointer;">{{ tag.tag_name }}</p>
                   <input required v-on:blur="modifyTagName(tag, false)" v-on:change="modifyTagName(tag, false)" v-model="tag.tag_name" v-if="tag.isModifying" class="input" />
                 </td>
                 <td>

@@ -21,6 +21,8 @@
     return ($num_rows > 0);
   }
 
+  $er = 0;
+
   if (isset($_POST['name'])
   && isset($_POST['screen_name'])
   && isset($_POST['password']) ) {
@@ -29,11 +31,15 @@
     $screen_name = $_POST["screen_name"];
     $password = $_POST["password"];
 
+    $er = 1;
+
     if ( !isScreenNameOverlapped($screen_name) ) {
+      $er = 2;
       if ( insert($name, $screen_name, $password) ) {
-       setcookie('screen_name', $screen_name, 0, "/~s1711430/");
-       setcookie('password', $password, 0, "/~s1711430/");
-       header("Location: http://turkey.slis.tsukuba.ac.jp/~s1711430/ice_author_profile.php");
+        $er = 0;
+        setcookie('screen_name', $screen_name, 0, "/~s1711430/");
+        setcookie('password', $password, 0, "/~s1711430/");
+        header("Location: http://turkey.slis.tsukuba.ac.jp/~s1711430/ice_author_profile.php");
       }
     }
   }
@@ -97,35 +103,40 @@
  
 
   <div class="section">
-    <form action="ice_create_author.php" method="POST">
+    <div class="container">
 
-      <div class="field">
-        <label class="label">名前</label>
-        <div class="control">
-          <input class="input" required type="text" name="name">
-        </div>
-      </div>
+      <?php if ($er == 1) echo '<article class="message is-danger"><div class="message-body">入力したIDは既にほかのユーザーに使われています</div></article>'; ?>
 
-      <div class="field">
-        <label class="label">ID</label>
-        <div class="control">
-          <input class="input" required type="text" name="screen_name">
-        </div>
-      </div>
+      <form action="ice_create_author.php" method="POST">
 
-      <div class="field">
-        <label class="label">Password</label>
-        <div class="control">
-          <input class="input" required type="password" name="password">
+        <div class="field">
+          <label class="label">名前</label>
+          <div class="control">
+            <input class="input" required type="text" name="name">
+          </div>
         </div>
-      </div>
 
-      <div class="field">
-        <div class="control">
-          <input class="button is-primary" type="submit">
+        <div class="field">
+          <label class="label">ID</label>
+          <div class="control">
+            <input class="input" required type="text" name="screen_name">
+          </div>
         </div>
-      </div>
-    </form>
+
+        <div class="field">
+          <label class="label">Password</label>
+          <div class="control">
+            <input class="input" required type="password" name="password">
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="control">
+            <input class="button is-primary" type="submit">
+          </div>
+        </div>
+      </form>
+    </div>
   </div>
 
 

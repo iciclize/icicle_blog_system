@@ -87,7 +87,7 @@
 
   <section class="section">
     <div class="container">
-      <div class="columns is-fullheight">
+      <div class="columns">
         <div class="column is-2">
 
         <?php require 'ice_author_menu.php' ?>
@@ -97,38 +97,29 @@
           <h1 class="title author_title">コメントの管理</h1>
 
           <div v-if="selected">
-            <div class="level">
-              <div class="level-left">
+            <section class="section">
 
-                <div class="level-item">
-                  <div class="control">
-                    <button v-on:click="deletePost()" type="submit" class="button is-danger">この記事を削除</button>
-                  </div>
-                </div>
+              <h2 class="title is-2">{{ selectedPost.title }}</h2>
+              <table class="table">
+                <tbody>
+                  <tr v-for="comment in comments" class="content">
+                    <td>
+                      <button v-on:click="deleteComment(comment)" class="button is-danger">削除</button>
+                    </td>
+                    <td>
+                      <p class="title is-5">
+                        {{ comment.title }}
+                        <span class="subtitle is-6"> by {{ comment.name }}</span>
+                      </p>
+                      <div>
+                        {{ comment.comment_text }}
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
 
-              </div>
-              <div class="level-right">
-                <div class="level-item">
-                  <div class="control">
-                    <div class="select">
-                      <select name="status">
-                        <option value="publish">公開</option>
-                        <option value="unpublish">非公開</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="level-item">
-                  <div class="control">
-                    <button v-on:click="updatePost()" type="submit" class="button is-info">更新</button>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-            <input name="title" v-bind:value="edit.title" placeholder="Title">
-            <textarea></textarea>
+            </section>
           </div>
           <div v-else>
             <div class="post content" v-for="post in posts">
@@ -137,9 +128,7 @@
                   {{ post.title }}
                 </h1>
               </a>
-              <p class="content-text">
-                {{ post.content_text | letter400 }}
-              </p>
+              <p class="content-text">{{ post.content_text | letter400 }}</p>
             </div>
           </div>
         </div>
@@ -159,70 +148,49 @@
     var app = new Vue({
       el: '#posts',
       data: {
-        author_id: null,
         selected: false,
         posts: [],
-        editPostId: null,
-        edit: {}
+        selectedPostId: null,
+        selectedPost: null,
+        comments: []
       },
       methods: {
         add: function(post) {
           this.posts.push(post);
         },
+        setComments: function(comments) {
+          this.comments = comments;
+        },
         selectPost: function(post) {
-          this.edit = post;
-          this.editPostId = post.post_id;
+          this.selectedPost = post;
+          this.selectedPostId = post.post_id;
           this.selected = true;
-          setTimeout((function(post) {
-            document.querySelector('select[name="status"]').selectedIndex = (post.status == 0) ? 1 : 0;
-            simplemde = new SimpleMDE();
-            simplemde.value(post.content);
-          }).bind(null, post), 145);
+          pullComments(post.post_id);
         },
-        updatePost: function() {
-          this.edit.title = document.querySelector('input[name="title"]').value;
-          this.edit.content = simplemde.value();
-          this.edit.content_text = (function() {
-            var e = document.createElement('div');
-            e.innerHTML = SimpleMDE.prototype.markdown(simplemde.value() );
-            console.log( html2plaintext(e) );
-            return html2plaintext(e);
-          }());
-          this.edit.content_html = SimpleMDE.prototype.markdown(simplemde.value());
-          this.edit.status = document.querySelector('select')[document.querySelector('select').selectedIndex].value;
-          if (this.edit.title === "") return false;
-          if (this.edit.content === "") return false;
-
-          var form = new FormData();
-
-          form.append("post_id", this.editPostId);
-          form.append("title", this.edit.title);
-          form.append("content", this.edit.content);
-          form.append("content_text", this.edit.content_text);
-          form.append("content_html", this.edit.content_html);
-          form.append("status", this.edit.status);
-
-          var xhr = new XMLHttpRequest();
-          xhr.onload = function() {
-            console.log(this.responseText);
-            location.reload();
-          };
-          xhr.open("POST", window.location.href);
-          xhr.send(form);
-        },
-        deletePost: function() {
-          var form = new FormData();
-          form.append("delete", this.editPostId);
-          var xhr = new XMLHttpRequest();
-          xhr.onload = function() {
-            console.log(this.responseText);
-            location.reload();
-          };
-          xhr.open("POST", window.location.href);
-          xhr.send(form);
+        deleteComment: function(comment) {
+          axios.get('http://turkey.slis.tsukuba.ac.jp/~s1711430/ice_comment.php?delete=' + comment.comment_id)
+            .then(function (response) {
+              console.log(response);
+              pullComments(app.selectedPostId);
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
         }
       }
     });
+
+    function pullComments(post_id) {
+      app.setComments([]);
+      axios.get('http://turkey.slis.tsukuba.ac.jp/~s1711430/ice_comment.php?post_id=' + post_id)
+        .then(function (response) {
+          console.log(response);
+          app.setComments(response.data);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
 
     var author_id = document.body.dataset.author_id;
 

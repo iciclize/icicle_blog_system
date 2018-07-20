@@ -18,7 +18,7 @@
     "FROM ice_tag_map map ".
     "LEFT JOIN ice_tag tag on map.tag_id = tag.tag_id ".
     "LEFT JOIN ice_post post on map.post_id = post.post_id ".
-    "WHERE post.post_id = " . $post['post_id'] . ";" ;
+    "WHERE post.post_id = " . $post['post_id'] . " ORDER BY tag_id DESC;" ;
 
     $res = $mysqli->query($sql);
 
@@ -43,20 +43,20 @@
 
 <?php
   require 'ice_mysqli_init.php';
-  $sql = "SELECT * FROM ice_post WHERE status=1;";
+  $sql = "SELECT * FROM ice_post WHERE status=1 ORDER BY post_id DESC;";
 
   if (isset($_GET['author_id'])) {
-    $sql = "SELECT * FROM ice_post WHERE author_id=".( (int)$_GET['author_id'] ).";" ;
+    $sql = "SELECT * FROM ice_post WHERE author_id=".( (int)$_GET['author_id'] )." ORDER BY ice_post.post_id DESC;" ;
   } else if (isset($_GET['tag_id'])) {
     $sql = "SELECT post.* ".
     "FROM ice_post post ".
     "LEFT JOIN ice_tag_map map on post.post_id = map.post_id ".
     "LEFT JOIN ice_tag tag on map.tag_id = tag.tag_id ".
-    "WHERE tag.tag_id = " . (int)$_GET['tag_id'] . ";";
+    "WHERE tag.tag_id = ".((int)$_GET['tag_id'])." ORDER BY post.post_id DESC;";
   } else if (isset($_GET['keyword'])) {
     $sql = "SELECT * FROM ice_post WHERE ".
     "content_text LIKE '%".(htmlspecialchars($_GET['keyword']))."%' ".
-    "or title LIKE '%".(htmlspecialchars($_GET['keyword']))."%' ".";";
+    "or title LIKE '%".(htmlspecialchars($_GET['keyword']))."%' "." ORDER BY ice_post.post_id DESC;";
   }
 
   $res = $mysqli->query($sql);
@@ -85,7 +85,7 @@
     "FROM ice_tag_map map ".
     "LEFT JOIN ice_tag tag on map.tag_id = tag.tag_id ".
     "LEFT JOIN ice_post post on map.post_id = post.post_id ".
-    "WHERE post.post_id = " . $post['post_id'] . ";" ;
+    "WHERE post.post_id = " . $post['post_id'] . " ORDER BY map.tag_id DESC;" ;
 
     $res = $mysqli->query($sql);
 

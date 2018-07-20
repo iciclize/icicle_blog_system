@@ -1,7 +1,8 @@
+<?php require 'ice_validate.php'; ?>
 <?php
   function getComments($postId) {
     require 'ice_mysqli_init.php';
-    $sql = "SELECT * FROM ice_comment WHERE post_id=".$postId.";";
+    $sql = "SELECT * FROM ice_comment WHERE post_id=".$postId." ORDER BY ice_comment.comment_id;";
     $res = $mysqli->query($sql);
     $posts = $res->fetch_all(MYSQLI_ASSOC);
 
@@ -24,12 +25,24 @@
     return $res;
   }
 
+  function deleteComment($comment_id) {
+    require 'ice_mysqli_init.php';
+    $stmt = $mysqli->prepare("DELETE FROM ice_comment WHERE comment_id=?");
+    $stmt->bind_param('i', $comment_id);
+    $stmt->execute();
+    $stmt->close();
+  }
+
 ?>
 
 <?php
   if (isset($_GET['post_id'])) {
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(getComments($_GET['post_id']));
+  } else if (isset($_GET['delete'])) {
+    if (validate())
+      deleteComment($_GET['delete']);
+    echo http_response_code( 200 );
   } else if (
     isset($_POST['post_id']) &&
     isset($_POST['name']) &&
